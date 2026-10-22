@@ -1,0 +1,66 @@
+# Ignore everything in the home directory by default.
+/*
+!/.gitignore
+!/AGENTS.md
+!/README.md
+!/package.json
+!/package-lock.json
+!/.github/
+/.github/*
+!/.github/workflows/
+
+# Shared sources of truth for all AI tools.
+!/skills/
+!/commands/
+
+# Let the skills CLI use the shared source directory.
+!/.agents/
+/.agents/*
+!/.agents/skills
+!/.agents/.skill-lock.json
+
+# Ignore project lockfiles. Global installs use the tracked lockfile above.
+skills-lock.json
+
+# Include the AI tool directories.
+!/.codex/
+!/.claude/
+!/.config/
+/.config/*
+!/.config/opencode/
+
+# Only portable Codex instructions and shared links belong in this repository.
+# Machine-specific config.toml and rules stay ignored by default.
+/.codex/*
+!/.codex/AGENTS.md
+!/.codex/skills
+!/.codex/commands
+!/.codex/prompts
+# Codex installs and updates these built-in skills itself.
+/.codex/skills/.system/
+
+# Only portable OpenCode customizations belong in this repository.
+# Config and package files retain their existing ignored status.
+/.config/opencode/*
+!/.config/opencode/AGENTS.md
+!/.config/opencode/skills
+!/.config/opencode/commands
+!/.config/opencode/agents/
+!/.config/opencode/agent/
+!/.config/opencode/plugins/
+!/.config/opencode/plugin/
+!/.config/opencode/themes/
+
+# Only portable Claude configuration belongs in this repository.
+/.claude/*
+!/.claude/skills
+!/.claude/commands
+!/.claude/agents/
+!/.claude/CLAUDE.md
+!/.claude/settings.json
+
+# Exclude generated files within otherwise included directories.
+**/node_modules/
+**/__pycache__/
+*.py[cod]
+.DS_Store

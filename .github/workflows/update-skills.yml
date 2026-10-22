@@ -1,0 +1,64 @@
+name: Update skills
+
+on:
+  schedule:
+    # Mondays at 08:17 UTC.
+    - cron: '17 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-skills
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install the pinned Skills CLI
+        run: npm ci --ignore-scripts
+
+      - name: Update skills from the tracked lockfile
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          # Global CLI paths resolve inside this checkout, not the runner's home.
+          HOME: ${{ github.workspace }}
+          XDG_CONFIG_HOME: ${{ github.workspace }}/.config
+          XDG_STATE_HOME: ''
+        run: |
+          test ! -L .agents/.skill-lock.json
+          test .agents/skills -ef skills
+          npm run skills:update
+
+      - name: Open or update the skills PR
+        uses: peter-evans/create-pull-request@v8.1.1
+        with:
+          token: ${{ github.token }}
+          branch: automation/update-skills
+          delete-branch: true
+          add-paths: |
+            skills/
+            .agents/.skill-lock.json
+          commit-message: 'chore: update upstream skills'
+          title: 'chore: update upstream skills'
+          body: |
+            Updates skills from the tracked `.agents/.skill-lock.json` using
+            the pinned Skills CLI. Includes upstream instructions and supporting files.
+
+            Includes changes under `skills/` and the corresponding lockfile updates.
+            Codex-managed `.system` skills are excluded.
+
+            Review the diff before merging.
