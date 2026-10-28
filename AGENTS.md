@@ -28,6 +28,12 @@ Avoid grand claims, repetitive summaries, unnecessary disclaimers, and long intr
 Do not turn a simple answer into a formal report.
 If a sentence sounds unnatural when spoken aloud, rewrite it.
 
+# Skill installation
+
+- Install skills only at the project level unless the user explicitly requests a global or user-level installation.
+- Check the installer's destination, including any symlink targets, before installing. Do not use global flags or user-level skill directories for a project installation.
+- If the installer cannot install at the project level, explain the limitation before proceeding.
+
 # Development servers
 
 When you start a web or development server for the user:
