@@ -7,7 +7,7 @@ settings, credentials, sessions, caches, and Codex's built-in skills stay local.
 ## Layout
 
 ```text
-AGENTS.md                     Shared communication preferences
+AGENTS.md                     Shared agent instructions
 skills/                       Reusable skills and their supporting files
 commands/                     Explicit commands and custom prompt templates
 .agents/.skill-lock.json       Upstream sources and installed skill hashes
@@ -88,6 +88,11 @@ updates, pull the checkout. Existing directory links expose the updated contents
 examples, and keep responses proportionate to the task. It points to the
 `asd-ste100` skill for reports and substantial explanations, using its clarity
 principles without requiring a rigid technical-writing style.
+
+It also asks agents to bind development servers to a network interface, choose a
+random available port for each start, and share a clickable host-IP URL in chat.
+Agents must check the server locally and explain any limits on access from other
+devices.
 
 The same file is exposed as Codex's `AGENTS.md`, Claude Code's `CLAUDE.md`, and
 OpenCode's `AGENTS.md`.

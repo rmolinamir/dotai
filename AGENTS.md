@@ -27,3 +27,14 @@ Prefer "use" to "leverage," "start" to "initiate," and "check" to "perform valid
 Avoid grand claims, repetitive summaries, unnecessary disclaimers, and long introductions.
 Do not turn a simple answer into a formal report.
 If a sentence sounds unnatural when spoken aloud, rewrite it.
+
+# Development servers
+
+When you start a web or development server for the user:
+
+- Bind it to `0.0.0.0` or the host's network IP so other devices can connect. Configure the server itself, including tools such as Vite.
+- Choose a random available port between `49152` and `65535` for each start. If the port is taken, choose another and retry. Do not stop another agent's server to free a port.
+- Check that the server is listening and responds to an HTTP request before sharing its link. Use the port it actually bound to.
+- Share a clickable URL in chat, including the scheme, the host's reachable LAN or Tailscale IP, and the port: `http://<host-ip>:<port>`. Include a useful page path when applicable.
+- Use a real host IP in the shared URL. `localhost`, `127.0.0.1`, and the bind address `0.0.0.0` will not direct another device to the server.
+- If a container, remote host, or network restriction requires port forwarding, explain what is needed. A successful local request does not prove the link works from the user's device.
