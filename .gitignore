@@ -5,6 +5,8 @@
 !/README.md
 !/package.json
 !/package-lock.json
+!/skills-lock.json
+!/licenses/
 !/.github/
 /.github/*
 !/.github/workflows/
@@ -19,8 +21,7 @@
 !/.agents/skills
 !/.agents/.skill-lock.json
 
-# Ignore project lockfiles. Global installs use the tracked lockfile above.
-skills-lock.json
+# Skill updates use the project lockfile; the legacy global index stays for compatibility.
 
 # Include the AI tool directories.
 !/.codex/

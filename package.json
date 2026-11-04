@@ -5,9 +5,10 @@
   "description": "Shared AI tool configuration, skills, and commands.",
   "scripts": {
     "skills": "skills",
-    "skills:add": "skills add --global --agent codex claude-code opencode --yes",
-    "skills:update": "skills update --global --yes",
-    "skills:list": "skills list --global"
+    "skills:add": "skills add --agent codex claude-code opencode --yes",
+    "skills:update": "skills update --project --yes",
+    "skills:list": "skills list",
+    "skills:restore": "skills experimental_install"
   },
   "devDependencies": {
     "skills": "1.7.4"
