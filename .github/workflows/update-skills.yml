@@ -38,6 +38,7 @@ jobs:
           test ! -L skills-lock.json
           test .agents/skills -ef skills
           npm run skills:update
+          npm run skills:validate
 
       - name: Open or update the skills PR
         uses: peter-evans/create-pull-request@v8.1.1

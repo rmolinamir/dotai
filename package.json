@@ -8,7 +8,8 @@
     "skills:add": "skills add --agent codex claude-code opencode --yes",
     "skills:update": "skills update --project --yes",
     "skills:list": "skills list",
-    "skills:restore": "skills experimental_install"
+    "skills:restore": "skills experimental_install",
+    "skills:validate": "node scripts/validate-skills.mjs"
   },
   "devDependencies": {
     "skills": "1.7.4"
