@@ -34,14 +34,11 @@ jobs:
       - name: Update skills from the tracked lockfile
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          # Global CLI paths resolve inside this checkout, not the runner's home.
-          HOME: ${{ github.workspace }}
-          XDG_CONFIG_HOME: ${{ github.workspace }}/.config
-          XDG_STATE_HOME: ''
         run: |
-          test ! -L .agents/.skill-lock.json
+          test ! -L skills-lock.json
           test .agents/skills -ef skills
           npm run skills:update
+          npm run skills:validate
 
       - name: Open or update the skills PR
         uses: peter-evans/create-pull-request@v8.1.1
@@ -51,11 +48,11 @@ jobs:
           delete-branch: true
           add-paths: |
             skills/
-            .agents/.skill-lock.json
+            skills-lock.json
           commit-message: 'chore: update upstream skills'
           title: 'chore: update upstream skills'
           body: |
-            Updates skills from the tracked `.agents/.skill-lock.json` using
+            Updates skills from the tracked `skills-lock.json` using
             the pinned Skills CLI. Includes upstream instructions and supporting files.
 
             Includes changes under `skills/` and the corresponding lockfile updates.

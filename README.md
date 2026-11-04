@@ -10,7 +10,7 @@ settings, credentials, sessions, caches, and Codex's built-in skills stay local.
 AGENTS.md                     Shared agent instructions
 skills/                       Reusable skills and their supporting files
 commands/                     Explicit commands and custom prompt templates
-.agents/.skill-lock.json       Upstream sources and installed skill hashes
+skills-lock.json              Project-local upstream sources and content hashes
 .github/workflows/            Scheduled skill updates
 package.json                  Pinned Skills CLI and npm shortcuts
 ```
@@ -57,7 +57,6 @@ Run the following in Bash or Zsh:
   link "$DOTAI/commands" "$HOME/commands"
 
   link "$DOTAI/skills" "$HOME/.agents/skills"
-  link "$DOTAI/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.json"
 
   link "$DOTAI/AGENTS.md" "$HOME/.claude/CLAUDE.md"
   link "$DOTAI/skills" "$HOME/.claude/skills"
@@ -75,9 +74,9 @@ Run the following in Bash or Zsh:
 )
 ```
 
-These paths assume each app's default configuration location and no custom
-`XDG_STATE_HOME`. The Skills CLI uses `$XDG_STATE_HOME/skills/.skill-lock.json`
-instead of `~/.agents/.skill-lock.json` when that variable is set.
+These links expose the shared files to each app. Maintain skills from the dotai
+checkout with the project-local commands below; no home-directory CLI state or
+`HOME` override is needed.
 
 Restart the apps after changing instructions, skills, or commands. To get later
 updates, pull the checkout. Existing directory links expose the updated contents.
@@ -107,25 +106,48 @@ npm run skills:update
 npm run skills:add -- owner/repository --skill skill-name
 ```
 
-The add command targets Codex, Claude Code, and OpenCode globally. The canonical
-CLI directory, `~/.agents/skills`, points to the shared `skills/` directory.
-Claude and OpenCode also use whole-directory links. Codex keeps a real
-`~/.codex/skills` directory with individual shared-skill links, allowing its
-managed `.system` directory to remain private to Codex. Codex can also discover
-new shared skills through `~/.agents/skills`.
+The commands operate only inside this checkout. `.agents/skills` points to
+`skills/`; Codex and OpenCode discover that canonical directory, and Claude's
+skills directory points to the same files. Existing home-directory links can
+still expose these skills globally without making the install commands global.
+
+`npm run skills:restore` reinstalls tracked upstream skills from their sources.
+The CLI's project lockfile records source paths and content hashes; it is not an
+immutable Git revision pin. Restoring/updating may fetch newer upstream content,
+so review the resulting skill and lockfile diff before committing.
 
 | Skill | Source |
 | --- | --- |
 | `find-skills` | [vercel-labs/skills](https://github.com/vercel-labs/skills) |
 | `asd-ste100` | [danyuchn/asd-ste100-skill](https://github.com/danyuchn/asd-ste100-skill) |
 | `codebase-design`, `grill-me`, `grilling`, `tdd` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `homelab-navigate`, `homelab-operate`, `homelab-add-repository` | Authored here for [atomly/homelab](https://github.com/atomly/homelab) |
+| `gitops-knowledge`, `gitops-repo-audit`, `gitops-cluster-debug` | Official [Flux project skills](https://github.com/fluxcd/agent-skills) |
 
-Commit skill changes together with `.agents/.skill-lock.json`. This is the Skills
-CLI's **global** lockfile and the source record for automated updates. Project
-installs use a different `skills-lock.json`, which this repository ignores.
+The homelab repository installs the three homelab skills from this repository and
+tracks them in its own `skills-lock.json`. Make shared homelab skill changes here,
+then update homelab's installed copies through the Skills CLI.
 
-The CLI is pinned to version 1.7.4. In that release, `skills check` is an alias for
-the updater, not a read-only check.
+The Flux skills require Flux 2.10+; schema validation additionally needs
+`flux-schema`, and live debugging needs `flux-operator-mcp` 0.60+. Installing the
+skills does not install those executables or configure an MCP server. It also does
+not authorize replacing the homelab's existing bootstrap installation with Flux
+Operator. Upstream license text is in `licenses/fluxcd-agent-skills.txt`.
+
+No official ARC skill was found in GitHub's Actions Runner Controller repository
+or GitHub-owned skill search on 2026-11-04. Do not label a community ARC skill as
+official. Use [GitHub's ARC documentation](https://docs.github.com/en/actions/concepts/runners/actions-runner-controller)
+and the local homelab operating skill until an official skill is available.
+
+Commit skill changes together with `skills-lock.json`. The old
+`.agents/.skill-lock.json` is retained only for compatibility with existing home
+links; it is a frozen legacy index and is no longer used by repository maintenance.
+Its six existing entries were migrated using their installed contents, without
+updating those skill files. Authored skills do not list this repository as their
+own upstream in the project lockfile.
+
+The CLI remains pinned to version 1.7.4 in `package-lock.json`. In that release,
+`skills check` is an alias for the updater, not a read-only check.
 
 ## Commands and prompts
 
@@ -154,10 +176,10 @@ older mechanism; use skills for new portable workflows when appropriate.
 ## Automatic skill updates
 
 The **Update skills** workflow runs every Monday at 08:17 UTC and can also be
-started manually from GitHub Actions. It reads the tracked global lockfile and
+started manually from GitHub Actions. It reads the tracked project lockfile and
 opens or updates a PR on `automation/update-skills` when skills change.
 
-The PR includes `skills/` and `.agents/.skill-lock.json`. Review upstream changes
+The PR includes `skills/` and `skills-lock.json`. Review upstream changes
 before merging. Codex-managed `.system` skills are outside this process.
 
 For a fork, enable **Settings → Actions → General → Workflow permissions → Allow

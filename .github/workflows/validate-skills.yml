@@ -1,0 +1,44 @@
+name: Validate skills
+
+on:
+  pull_request:
+    paths:
+      - skills/**
+      - skills-lock.json
+      - package.json
+      - package-lock.json
+      - scripts/validate-skills.mjs
+      - .agents/**
+      - .claude/skills
+      - .codex/skills/**
+      - .github/workflows/validate-skills.yml
+      - .github/workflows/update-skills.yml
+  push:
+    branches: [main]
+    paths:
+      - skills/**
+      - skills-lock.json
+      - package.json
+      - package-lock.json
+      - scripts/validate-skills.mjs
+      - .agents/**
+      - .claude/skills
+      - .codex/skills/**
+      - .github/workflows/validate-skills.yml
+      - .github/workflows/update-skills.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run skills:validate
