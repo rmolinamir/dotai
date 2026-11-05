@@ -24,7 +24,11 @@ flux build kustomization atomly-arc --path ./arc \
 
 The publisher builds and smoke-tests the generic image, then publishes on main
 and on its weekly schedule. Publishing `latest` does not change the deployed
-digest. Promote a tested digest in `arc/values.yaml` for BOTH the runner and
+digest. The publisher currently does not open a promotion PR automatically. A
+maintainer opens that PR after validating the candidate. Automatic digest-PR
+creation is a proposal tracked separately from the existing publisher.
+
+Promote a tested digest in `arc/values.yaml` for BOTH the runner and
 `init-dind-externals`. Keep `IfNotPresent` so K3s reuses node-local image layers.
 
 Confirm package visibility through `gh api orgs/atomly/packages/container/actions-runner`.
