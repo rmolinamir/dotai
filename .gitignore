@@ -11,6 +11,7 @@
 !/.github/
 /.github/*
 !/.github/workflows/
+!/.github/dependabot.yml
 
 # Shared sources of truth for all AI tools.
 !/skills/

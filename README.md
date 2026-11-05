@@ -195,3 +195,13 @@ configuration, credentials, session history, databases, caches, dependencies,
 and Codex's `.system` skills are excluded.
 
 Upstream skills retain their own license terms and any bundled notices.
+
+## Canonical checkout on development
+
+On the `development` VM, `/home/rmolinamir` itself is this repository's Git
+worktree. Verify `git remote get-url origin` before editing. Pull this checkout
+instead of maintaining a second clone at `projects/dotai`.
+
+Dependabot checks the root npm dependencies, including the pinned Skills CLI,
+every Monday at 08:35 UTC. Skill contents are checked separately by the existing
+Monday 08:17 UTC skills.sh workflow.

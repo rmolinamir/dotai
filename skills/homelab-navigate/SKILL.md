@@ -15,6 +15,11 @@ Application repositories own their tool versions, dependency lockfiles, and jobs
 
 ## Hosts and access
 
+The `development` VM uses `/home/rmolinamir` itself as the canonical
+`rmolinamir/dotai` Git worktree. Confirm its Git remote before editing shared
+skills. Pull that checkout instead of creating a duplicate under `projects/dotai`.
+The `atomly/homelab` checkout remains a separate repository under `projects/`.
+
 - K3s VM: `development-ci`, `192.168.122.170`, SSH user `rmolinamir`.
 - VM checkout: `/home/rmolinamir/projects/homelab`.
 - The local homelab host has a direct route to the VM; check `ip route get 192.168.122.170` if access fails.
