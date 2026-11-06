@@ -10,7 +10,7 @@ If it is elsewhere, use the matching checkout. Commands and paths such as
 not to the dotai checkout or the installed skill directory.
 
 Read the root README and the current manifests before assuming the deployed state.
-This repository owns the shared runner image and ARC scale-set configuration.
+This repository owns the shared runner image, ARC controller, and scale-set configuration.
 Application repositories own their tool versions, dependency lockfiles, and jobs.
 
 ## Hosts and access
@@ -33,7 +33,10 @@ The `atomly/homelab` checkout remains a separate repository under `projects/`.
 | Concern | Location |
 | --- | --- |
 | Flux bootstrap and Git source | `clusters/development-ci/flux-system/` |
-| ARC reconciliation switch | `clusters/development-ci/arc.yaml` |
+| Controller reconciliation | `clusters/development-ci/arc-controller.yaml` |
+| Controller chart/release/namespace | `arc-controller/chart.yaml`, `arc-controller/release.yaml`, `arc-controller/namespace.yaml` |
+| Scale-set reconciliation | `clusters/development-ci/arc.yaml` |
+| Controller operation and recovery runbook | `docs/arc-controller.md` |
 | Helm release/chart/values | `arc/release.yaml`, `arc/chart.yaml`, `arc/values.yaml` |
 | Persistent tool/browser caches | `arc/cache-pvcs.yaml` |
 | Docker Hub pull-through cache | `arc/registry-cache.yaml` |
@@ -45,6 +48,11 @@ Flux runs in `flux-system`; the controller and scale-set listeners run in
 `arc-systems`; the `homelab-atomly` scale set and cache resources live in
 `development-ci-arc-atomly`. Registration targets `https://github.com/Atomly` and
 runner group `homelab`, which permits private organization repositories.
+
+Flux manages controller HelmRelease `arc` in `arc-systems` and runner HelmRelease
+`homelab-atomly` in `development-ci-arc-atomly`. Kustomization `atomly-arc` depends
+on `atomly-arc-controller`; the runner HelmRelease also depends on controller
+HelmRelease readiness. Read the current manifests for pinned chart versions.
 
 Use `flux get kustomizations -A`, `flux get helmreleases -A`, and
 `kubectl -n development-ci-arc-atomly get pods,pvc,autoscalingrunnersets` to compare

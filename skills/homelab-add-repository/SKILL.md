@@ -76,6 +76,11 @@ directory into multiple runner pods.
 
 ## Acceptance
 
+Confirm the existing controller release `arc` and scale-set release
+`homelab-atomly` are Ready with `flux get helmreleases -A`. If controller readiness
+blocks runner reconciliation, use `homelab-operate` and the homelab checkout's
+`docs/arc-controller.md`; do not create a parallel controller for the new repository.
+
 Use a PR to prove the repository's real build/tests on the runner. Repeat from a
 new ephemeral pod and verify tool, package, browser, and runner-image reuse as
 applicable. Check its resources alongside other repositories. Keep repositories
