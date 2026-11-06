@@ -80,7 +80,8 @@ flux get helmreleases -A
 
 Verify controller release `arc` and runner release `homelab-atomly` are Ready.
 Check the expected controller and runner images.
-Preserve its name, group, authentication Secret reference, custom DinD template,
+Preserve the runner scale set's name, group, authentication Secret reference,
+custom DinD template,
 and runner-only AppArmor workaround unless the task explicitly changes them.
 Never print Secret payloads or kubeconfig contents.
 
