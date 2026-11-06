@@ -1,6 +1,6 @@
 ---
 name: homelab-operate
-description: Change, validate, diagnose, or clean Atomly's Flux-managed ARC runners, shared image, and persistent caches, including rollout and rollback.
+description: Change, validate, diagnose, or clean Atomly's Flux-managed ARC runners, shared image, and persistent caches, including controller adoption, rollout, and rollback.
 ---
 
 Locate the `atomly/homelab` checkout before following repository-relative paths.
@@ -15,12 +15,28 @@ runner available until a candidate passes real repository CI.
 
 ## Delivery and validation
 
-Make infrastructure changes through a PR. Render the proposed configuration:
+Make infrastructure changes through a PR. Render the scale-set configuration:
 
 ```bash
 flux build kustomization atomly-arc --path ./arc \
   --kustomization-file ./clusters/development-ci/arc.yaml --dry-run
 ```
+
+For controller changes, also render:
+
+```bash
+flux build kustomization atomly-arc-controller --path ./arc-controller \
+  --kustomization-file ./clusters/development-ci/arc-controller.yaml --dry-run
+```
+
+Flux manages the existing controller release `arc` in `arc-systems`. Preserve its
+release/storage identity. The scale-set Kustomization and HelmRelease depend on
+controller readiness. Inspect `arc-controller/` and `docs/arc-controller.md` before
+controller upgrades, adoption, or recovery. Compare the pinned chart, rendered
+RBAC, image, and pod settings with the working release. OCI chart-version labels
+can cause a controller pod restart even when its image is unchanged. Keep active
+runner jobs intact. The current `upgrade.crds: Skip` preserves existing CRDs;
+future chart upgrades need an explicit CRD compatibility and lifecycle review.
 
 The publisher builds and smoke-tests the generic image, then publishes on main
 and on its weekly schedule. Publishing `latest` does not change the deployed
@@ -56,13 +72,16 @@ After merge, Flux reconciles Git automatically. For an immediate check:
 
 ```bash
 flux reconcile kustomization flux-system --with-source
+flux reconcile kustomization atomly-arc-controller
 flux reconcile kustomization atomly-arc
 flux get kustomizations -A
 flux get helmreleases -A
 ```
 
-Verify the existing `homelab-atomly` release is Ready and uses the expected image.
-Preserve its name, group, authentication Secret reference, custom DinD template,
+Verify controller release `arc` and runner release `homelab-atomly` are Ready.
+Check the expected controller and runner images.
+Preserve the runner scale set's name, group, authentication Secret reference,
+custom DinD template,
 and runner-only AppArmor workaround unless the task explicitly changes them.
 Never print Secret payloads or kubeconfig contents.
 
@@ -83,6 +102,14 @@ activation/image PR so Flux restores the previous configuration. Suspending a
 Kustomization pauses reconciliation; it does not undo an upgrade. If emergency
 manual Helm work is necessary, suspend the owning reconciliation first and make
 Git agree before resuming it.
+
+For controller recovery, suspend HelmRelease `arc` in `arc-systems` as well as
+Kustomization `atomly-arc-controller` before manual Helm changes. Suspending only
+the Kustomization does not pause HelmRelease reconciliation. Do not delete the
+controller HelmRelease, namespace, or ARC CRDs to roll back. Child Kustomizations
+use `prune: false`, but explicit HelmRelease deletion can uninstall the release.
+Removing manifests from Git is not a Helm rollback. Follow `docs/arc-controller.md`
+for the recorded backup, release history, and recovery procedure.
 
 The initial pre-Flux backup is on the VM at
 `~/.local/state/homelab/homelab-atomly.pre-flux.yaml`. Its old image package may
