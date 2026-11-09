@@ -12,6 +12,6 @@
     "skills:validate": "node scripts/validate-skills.mjs"
   },
   "devDependencies": {
-    "skills": "1.7.4"
+    "skills": "1.7.6"
   }
 }
